@@ -25,4 +25,4 @@ RUN rm -rf /root/.cache/pip /root/.cache/huggingface /tmp/*
 
 EXPOSE 7860
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["gunicorn", "main:app", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:7860"]
