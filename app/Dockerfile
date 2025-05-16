@@ -2,8 +2,7 @@
 FROM python:3.9-slim
 
 # Set working directory inside the container
-WORKDIR /sentiment-api
-
+WORKDIR /app
 # Copy requirements and install dependencies
 COPY requirements.txt .
 
