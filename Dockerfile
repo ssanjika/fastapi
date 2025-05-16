@@ -1,35 +1,30 @@
-FROM python:3.9-slim-bullseye
+# Use official Python 3.9 slim image
+FROM python:3.9-slim
 
+# Set working directory and environment variables
 WORKDIR /app
-
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/python \
-    TRANSFORMERS_CACHE=/app/models
+    TRANSFORMERS_CACHE=/app/.cache/huggingface
 
-# Install minimal required system dependencies
+# Install system dependencies needed for torch and transformers
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
-    binutils \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /root/.cache
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements file
+# Copy only requirements first for caching
 COPY requirements.txt .
 
-# Install Python dependencies directly into /app/python
+# Install Python dependencies using the CPU-only torch wheels from PyTorch official repo
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt --target=/app/python --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+    pip install --no-cache-dir -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-# Copy application code
+# Copy only your app code now
 COPY . .
 
-# Clean __pycache__ and strip shared libs
-RUN find . -type d -name "__pycache__" -exec rm -rf {} + && \
-    find /app/python -type d -name "__pycache__" -exec rm -rf {} + && \
-    find /app/python -name '*.so' -exec strip --strip-unneeded {} + || true
+# Clear caches to reduce image size
+RUN rm -rf /root/.cache/pip /root/.cache/huggingface /tmp/*
 
-# Expose FastAPI port
+# Expose port and command to run app
 EXPOSE 7860
-
-# Start FastAPI with uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
