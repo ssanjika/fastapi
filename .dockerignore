@@ -1,0 +1,59 @@
+# Model and data files
+*.h5
+*.pkl
+*.joblib
+*.mp3
+*.avi
+*.mov
+*.pdf
+*.zip
+*.tar.gz
+
+# Development directories
+venv/
+.venv/
+virtualenv/
+env/
+ENV/
+node_modules/
+bower_components/
+
+# Cache and temp files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project files
+staticfiles/
+media/
+uploads/
+datasets/
+notebooks/
+*.sqlite3
+*.ipynb
+hf_cache/
+/app/hf_cache/
+~/.cache/
