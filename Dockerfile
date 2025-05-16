@@ -18,7 +18,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt . 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
@@ -39,20 +39,22 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     TRANSFORMERS_CACHE=/app/models \
     PATH="/opt/venv/bin:$PATH"
 
-# Copy only necessary components
+# Install runtime dependencies and binutils (for strip)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libgomp1 binutils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /root/.cache
+
+# Copy virtual environment and models from builder
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /app/models /app/models
 COPY . .
 
-# Install runtime dependencies and clean
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libgomp1 \
-    && apt-get purge -y --auto-remove \
-    && rm -rf /var/lib/apt/lists/* \
-    && find /opt/venv -type d -name 'tests' -exec rm -rf {} + \
-    && find /opt/venv -name '*.so' -exec strip {} \; \
-    && rm -rf /root/.cache
+# Clean up __pycache__ and strip shared libs to reduce size
+RUN find /opt/venv -type d -name '__pycache__' -exec rm -rf {} + && \
+    find . -type d -name '__pycache__' -exec rm -rf {} + && \
+    find /opt/venv -name '*.so' -exec strip --strip-unneeded {} +
 
 EXPOSE 7860
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
