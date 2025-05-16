@@ -1,15 +1,22 @@
 import re
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 
+
+
 def load_finbert_pipeline():
-    model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
-    tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+    # Smaller general sentiment model instead of ProsusAI/finbert
+    model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     return pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 
 def load_multilang_pipeline():
-    model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-    tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    # Smaller multilingual distilled model instead of nlptown/bert-base-multilingual-uncased-sentiment
+    model_name = "distilbert-base-multilingual-cased"
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     return pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+
 
 def detect_language(text):
     if not text:
