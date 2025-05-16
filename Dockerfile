@@ -1,36 +1,50 @@
-# Use a minimal base image
-FROM python:3.9-slim as base
+# Stage 1: Builder
+FROM python:3.9-slim as builder
 
-# Set environment variables to avoid Python cache and set timezone
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    TZ=UTC
-
-# Set work directory
 WORKDIR /app
 
-# Install essential system dependencies only
+# Avoid Python bytecode and buffering
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TRANSFORMERS_CACHE=/tmp/huggingface
+
+# Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements to leverage Docker cache
+# Install Python deps
 COPY requirements.txt .
-
-# Install Python dependencies (CPU-only PyTorch via direct link)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-# Copy the application code
+# Pre-download models
+RUN python -c "from transformers import AutoModelForSequenceClassification, AutoTokenizer; \
+    AutoModelForSequenceClassification.from_pretrained('ProsusAI/finbert'); \
+    AutoTokenizer.from_pretrained('ProsusAI/finbert'); \
+    AutoModelForSequenceClassification.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment'); \
+    AutoTokenizer.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment')"
+
+# Copy app code
 COPY . .
 
-# Remove Python cache
-RUN find . -type d -name "__pycache__" -exec rm -rf {} + && \
-    rm -rf /root/.cache /tmp/*
+# Stage 2: Final image
+FROM python:3.9-slim
 
-# Expose the port for FastAPI
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Install system deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy installed site-packages and app from builder
+COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=builder /app /app
+
+# Expose FastAPI port
 EXPOSE 7860
 
-# Start the server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
