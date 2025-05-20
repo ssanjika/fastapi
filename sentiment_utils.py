@@ -19,6 +19,7 @@ try:
     )
     finbert_tokenizer = AutoTokenizer.from_pretrained(
         "ProsusAI/finbert",
+        from_tf=True,
         cache_dir=cache_dir
     )
 
