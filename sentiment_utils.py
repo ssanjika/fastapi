@@ -1,5 +1,5 @@
 import re
-from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import pipeline, TFAutoModelForSequenceClassification, AutoTokenizer
 import torch
 # Fix cache issue
 import os
@@ -8,7 +8,7 @@ os.environ["HF_HOME"] = r"C:\Users\DELL\.cache\huggingface"
 try:
     
     cache_dir = "./finbert_cache"  # Optional: Local dir for model reuse
-    finbert_model = AutoModelForSequenceClassification.from_pretrained(
+    finbert_model = TFAutoModelForSequenceClassification.from_pretrained(
         "ProsusAI/finbert",
         from_tf=True,
         cache_dir=cache_dir
@@ -26,7 +26,7 @@ try:
     )
     print("Successfully loaded FinBERT model")
     # Load multilingual model
-    multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    multilang_model = TFAutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_pipeline = pipeline(
         "sentiment-analysis",
