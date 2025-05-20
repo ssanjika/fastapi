@@ -6,33 +6,24 @@ import os
 os.environ["HF_HOME"] = r"C:\Users\DELL\.cache\huggingface"
 
 try:
-    # Load the PyTorch FinBERT model
-    model_name = "ProsusAI/finbert"
+    
+    cache_dir = "./finbert_cache"  # Optional: Local dir for model reuse
+    finbert_model = AutoModelForSequenceClassification.from_pretrained(
+        "ProsusAI/finbert",
+        from_tf=True,
+        cache_dir=cache_dir
+    )
+    finbert_tokenizer = AutoTokenizer.from_pretrained(
+        "ProsusAI/finbert",
+        cache_dir=cache_dir
+    )
 
-    finbert_model = AutoModelForSequenceClassification.from_pretrained(model_name)
-    finbert_tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    # Create sentiment pipeline (will run on GPU if available)
-    device = 0 if torch.cuda.is_available() else -1
-    finbert_pipeline = pipeline("sentiment-analysis", model=finbert_model, tokenizer=finbert_tokenizer, device=device)
-
-    # cache_dir = "./finbert_cache"  # Optional: Local dir for model reuse
-    # finbert_model = AutoModelForSequenceClassification.from_pretrained(
-    #     "ProsusAI/finbert",
-    #     from_tf=True,
-    #     cache_dir=cache_dir
-    # )
-    # finbert_tokenizer = AutoTokenizer.from_pretrained(
-    #     "ProsusAI/finbert",
-    #     cache_dir=cache_dir
-    # )
-
-    # finbert_pipeline = pipeline(
-    #     "sentiment-analysis",
-    #     model=finbert_model,
-    #     tokenizer=finbert_tokenizer,
-    #     device=0 if torch.cuda.is_available() else -1
-    # )
+    finbert_pipeline = pipeline(
+        "sentiment-analysis",
+        model=finbert_model,
+        tokenizer=finbert_tokenizer,
+        device=0 if torch.cuda.is_available() else -1
+    )
     print("Successfully loaded FinBERT model")
     # Load multilingual model
     multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
