@@ -22,7 +22,7 @@ try:
         "sentiment-analysis",
         model=finbert_model,
         tokenizer=finbert_tokenizer,
-        device=0 if torch.cuda.is_available() else -1
+        framework="tf"
     )
     print("Successfully loaded FinBERT model")
     # Load multilingual model
