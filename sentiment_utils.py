@@ -5,8 +5,12 @@ import torch
 
 try:
     # Load FinBERT with explicit device mapping
-    finbert_model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert", from_tf=True)
-    finbert_tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+    finbert_model = AutoModelForSequenceClassification.from_pretrained(
+        "ProsusAI/finbert", from_tf=True, trust_remote_code=True
+    )
+    finbert_tokenizer = AutoTokenizer.from_pretrained(
+        "ProsusAI/finbert", trust_remote_code=True
+    )
     finbert_pipeline = pipeline(
         "sentiment-analysis",
         model=finbert_model,
