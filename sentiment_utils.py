@@ -2,9 +2,8 @@ import re
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 import torch
 # Fix cache issue
-# Optionally set cache directory via environment variable
 import os
-os.environ["HF_HOME"] = "~/.cache/huggingface" 
+os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
 
 try:
   
@@ -13,10 +12,9 @@ try:
 
     # Load FinBERT with explicit cache directory
     cache_dir = "./finbert_cache"  # Local directory for caching
-    
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
         "ProsusAI/finbert",
-        from_pt=True,
+        from_tf=True,
         cache_dir=cache_dir
     )
     finbert_tokenizer = AutoTokenizer.from_pretrained(
