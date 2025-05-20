@@ -14,22 +14,22 @@ try:
     # Load FinBERT with explicit cache directory
     cache_dir = "./finbert_cache"  # Local directory for caching
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
-        "ProsusAI/finbert",
-        from_tf=True,
-        cache_dir=cache_dir
-    )
-    finbert_tokenizer = AutoTokenizer.from_pretrained(
-        "ProsusAI/finbert",
+        "yiyanghkust/finbert-tone",
         cache_dir=cache_dir
     )
 
-    # Create pipeline with device mapping
+    finbert_tokenizer = AutoTokenizer.from_pretrained(
+        "yiyanghkust/finbert-tone",
+        cache_dir=cache_dir
+    )
+
     finbert_pipeline = pipeline(
         "sentiment-analysis",
         model=finbert_model,
         tokenizer=finbert_tokenizer,
         device=0 if torch.cuda.is_available() else -1
     )
+
     
     # Load multilingual model
     multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
