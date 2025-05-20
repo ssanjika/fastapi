@@ -13,6 +13,7 @@ try:
 
     # Load FinBERT with explicit cache directory
     cache_dir = "./finbert_cache"  # Local directory for caching
+    
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
         "ProsusAI/finbert",
         from_tf=True,
