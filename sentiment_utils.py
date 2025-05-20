@@ -1,21 +1,20 @@
 import re
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 import torch
+# Fix cache issue
+os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
 
-device = 0 if torch.cuda.is_available() else -1
 try:
-        # Load FinBERT with explicit device mapping
-    model_name = "yiyanghkust/finbert-tone"
-    model = AutoModelForSequenceClassification.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-
+    # Load FinBERT with explicit device mapping
+    finbert_model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
+    finbert_tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
     finbert_pipeline = pipeline(
         "sentiment-analysis",
-        model=model,
-        tokenizer=tokenizer,
-        device=device
-    )  
-        
+        model=finbert_model,
+        tokenizer=finbert_tokenizer,
+        device=0 if torch.cuda.is_available() else -1
+    )
+    
     # Load multilingual model
     multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
