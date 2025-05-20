@@ -4,19 +4,18 @@ import torch
 
 device = 0 if torch.cuda.is_available() else -1
 try:
-    # Load FinBERT with explicit device mapping
-    finbert_model = AutoModelForSequenceClassification.from_pretrained(
-        "ProsusAI/finbert", from_tf=True, trust_remote_code=True
-    )
-    finbert_tokenizer = AutoTokenizer.from_pretrained(
-        "ProsusAI/finbert", trust_remote_code=True
-    )
+        # Load FinBERT with explicit device mapping
+    model_name = "yiyanghkust/finbert-tone"
+    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
     finbert_pipeline = pipeline(
         "sentiment-analysis",
-        model=finbert_model,
-        tokenizer=finbert_tokenizer,
+        model=model,
+        tokenizer=tokenizer,
         device=device
-    )
+    )  
+        
     # Load multilingual model
     multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
