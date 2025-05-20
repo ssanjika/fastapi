@@ -2,13 +2,27 @@ import re
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 import torch
 # Fix cache issue
+# Optionally set cache directory via environment variable
 import os
-os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
+os.environ["HF_HOME"] = "~/.cache/huggingface" 
 
 try:
-    # Load FinBERT with explicit device mapping
-    finbert_model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
-    finbert_tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+  
+
+ # Or another writable path
+
+    # Load FinBERT with explicit cache directory
+    cache_dir = "./finbert_cache"  # Local directory for caching
+    finbert_model = AutoModelForSequenceClassification.from_pretrained(
+        "ProsusAI/finbert",
+        cache_dir=cache_dir
+    )
+    finbert_tokenizer = AutoTokenizer.from_pretrained(
+        "ProsusAI/finbert",
+        cache_dir=cache_dir
+    )
+
+    # Create pipeline with device mapping
     finbert_pipeline = pipeline(
         "sentiment-analysis",
         model=finbert_model,
