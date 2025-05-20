@@ -16,7 +16,7 @@ try:
     
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
         "ProsusAI/finbert",
-        from_tf=True,
+        from_pt=True,
         cache_dir=cache_dir
     )
     finbert_tokenizer = AutoTokenizer.from_pretrained(
