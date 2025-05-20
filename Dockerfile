@@ -4,7 +4,7 @@ FROM python:3.10.9-slim
 # Copy the current directory contents into the container at .
 COPY . .
 
-# Set the working directory to /
+
 WORKDIR /
 
 # Install requirements.txt 
