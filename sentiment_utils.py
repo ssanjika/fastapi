@@ -15,6 +15,7 @@ try:
     cache_dir = "./finbert_cache"  # Local directory for caching
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
         "yiyanghkust/finbert-tone",
+        from_tf=True,
         cache_dir=cache_dir
     )
 
