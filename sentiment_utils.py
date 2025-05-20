@@ -2,6 +2,7 @@ import re
 from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 import torch
 # Fix cache issue
+import os
 os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
 
 try:
