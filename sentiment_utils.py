@@ -1,5 +1,5 @@
 import re
-from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import pipeline, TFAutoModelForSequenceClassification, AutoTokenizer
 import torch
 # Fix cache issue
 # Optionally set cache directory via environment variable
@@ -13,7 +13,7 @@ try:
 
     # Load FinBERT with explicit cache directory
     cache_dir = "./finbert_cache"  # Local directory for caching
-    finbert_model = AutoModelForSequenceClassification.from_pretrained(
+    finbert_model = TFAutoModelForSequenceClassification.from_pretrained(
         "yiyanghkust/finbert-tone",
         from_tf=True,
         cache_dir=cache_dir
@@ -33,7 +33,7 @@ try:
 
     
     # Load multilingual model
-    multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    multilang_model = TFAutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_pipeline = pipeline(
         "sentiment-analysis",
