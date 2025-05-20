@@ -3,15 +3,10 @@ from transformers import pipeline, AutoModelForSequenceClassification, AutoToken
 import torch
 # Fix cache issue
 import os
-os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
+os.environ["HF_HOME"] = r"C:\Users\DELL\.cache\huggingface"
 
 try:
-  
-
- # Or another writable path
-
-    # Load FinBERT with explicit cache directory
-    cache_dir = "./finbert_cache"  # Local directory for caching
+    cache_dir = "./finbert_cache"  # Optional: Local dir for model reuse
     finbert_model = AutoModelForSequenceClassification.from_pretrained(
         "ProsusAI/finbert",
         from_tf=True,
@@ -22,14 +17,13 @@ try:
         cache_dir=cache_dir
     )
 
-    # Create pipeline with device mapping
     finbert_pipeline = pipeline(
         "sentiment-analysis",
         model=finbert_model,
         tokenizer=finbert_tokenizer,
         device=0 if torch.cuda.is_available() else -1
     )
-    
+    print("Successfully loaded FinBERT model")
     # Load multilingual model
     multilang_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     multilang_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
